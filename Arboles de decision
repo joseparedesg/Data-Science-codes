@@ -1,0 +1,81 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Dec 29 01:30:03 2018
+
+@author: Man
+"""
+
+import pandas as pd
+mainpath = r'C:\Users\Man\Documents\Machine Learning\Phyton Machine Learning\python-ml-course-master\datasets'
+filename = r'\iris\iris.csv'
+fullpath = mainpath + filename
+datai = pd.read_csv(fullpath)
+datai.head()
+
+#tamaño de data
+datai.shape
+
+#histograma de plantas
+import matplotlib.pyplot as plt
+plt.hist(datai.Species)
+
+#ver unicos
+datai.Species.unique()
+
+#convertir en array
+colnames = datai.columns.values
+
+#Variables endegenas y exogenas
+predictors = colnames[:4]
+target = colnames[4]
+
+import numpy as np
+
+#Creamos los datos de entrenamiento
+datai["is_train"] = np.random.uniform(0,1, len(datai))<=0.75
+plt.hist[datai.is_train]
+
+#Definimos variables
+train, test= datai[datai["is_train"]==True], datai[datai["is_train"]==False]
+
+#importarlibrerias
+from sklearn.tree import DecisionTreeClassifier
+
+#Hacemos el arbol de clasificacion
+tree = DecisionTreeClassifier(criterion="entropy", max_depth=5, min_samples_split=20,random_state=99)
+tree.fit(train[predictors],train[target])
+
+#ver resultados
+pred = tree.predict(test[predictors])
+pd.crosstab(test[target], pred, rownames=["Actual"], colnames=["Predictions"])
+
+#ver arbol
+from sklearn.tree import export_graphviz
+with open(mainpath + "iris_dtree.dot", "w") as dotfile:
+    export_graphviz(tree, out_file=dotfile, feature_names=predictors)
+    dotfile.close()
+from graphviz import Source
+#NO SE PUDO
+
+#Podar arbol de decision
+X = datai[predictors]
+Y = datai[target]
+from sklearn.model_selection import KFold
+cv = KFold(n_splits=2, random_state=1, shuffle=True)
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(tree, X, Y, scoring="accuracy", cv=10, n_jobs=1)
+scores
+score = np.mean(scores)
+score
+
+
+#Decidir entre varias opciones
+for i in range(1,11):
+    tree = DecisionTreeClassifier(criterion="entropy", max_depth=i, min_samples_split=20,random_state=99)
+    tree.fit(X,Y)
+    scores = cross_val_score(tree, X, Y, scoring="accuracy", cv=10, n_jobs=1)
+    score = np.mean(scores)
+    print("Score para i", i, "es de", score)
+    print("    ", tree.feature_importances_)
+
+
