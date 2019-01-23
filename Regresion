@@ -1,0 +1,50 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Dec 21 16:44:40 2018
+
+@author: Man
+"""
+
+import pandas as pd
+mainpath5 = r'C:\Users\Man\Documents\Machine Learning\Phyton Machine Learning\python-ml-course-master\datasets'
+filename5 = r'\ads\Advertising.csv'
+fullpath5 = mainpath5 + filename5
+dataad = pd.read_csv(fullpath5)
+dataad.head()
+
+#regresion
+import statsmodels.formula.api as sfm
+lm = sfm.ols(formula="Sales~TV",data=dataad).fit()
+lm.params
+
+#Pvalues
+lm.pvalues
+
+#R2
+lm.rsquared
+lm.rsquared_adj
+
+#Sumary super importante
+lm.summary()
+
+#Prediccion
+sales_pred = lm.predict(pd.DataFrame(dataad["TV"]))
+sales_pred
+
+#graficos
+import matplotlib.pyplot as plt
+dataad.plot(kind="scatter", x="TV", y="Sales")
+plt.plot(pd.DataFrame(dataad["TV"]),sales_pred, c="red", linewidth=2)
+
+#HAcerlo una regresion multiple
+
+lm2 = sfm.ols(formula="Sales~TV+Newspaper",data=dataad).fit()
+lm2.params
+lm2.summary()
+
+lm3 = sfm.ols(formula="Sales~TV+Radio",data=dataad).fit()
+lm3.params
+lm3.summary()
+
+#correlaciones entre variables
+dataad.corr()
