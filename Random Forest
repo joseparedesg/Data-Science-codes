@@ -1,0 +1,59 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jan  2 15:18:43 2019
+
+@author: Man
+"""
+##RANDOM FOREST REGRESION
+import pandas as pd
+mainpath = r'C:\Users\Man\Documents\Machine Learning\Phyton Machine Learning\python-ml-course-master\datasets'
+filename = r'\boston\Boston.csv'
+fullpath = mainpath + filename
+datab = pd.read_csv(fullpath)
+datab.head()
+datab.shape
+
+#Variables endegenas y exogenas
+predictors = colnames[:13]
+target = colnames[13]
+X = datab[predictors]
+Y = datab[target]
+
+
+from sklearn.ensemble import RandomForestRegressor
+forest = RandomForestRegressor(n_jobs=2, oob_score=True, n_estimators=500)
+forest.fit(X,Y)
+forest.oob_prediction_
+
+datab["rforest_pred"]= forest.oob_prediction_
+datab[["rforest_pred", "medv"]]
+
+#Error medio cuadratico
+datab["rforest_error"]= (datab["rforest_pred"]-datab["medv"])**2
+sum(datab["rforest_error"])/len(datab)
+
+#Eficacia
+forest.oob_score_
+
+##RANDOM FOREST CLASIFICACION
+import pandas as pd
+mainpath = r'C:\Users\Man\Documents\Machine Learning\Phyton Machine Learning\python-ml-course-master\datasets'
+filename = r'\iris\iris.csv'
+fullpath = mainpath + filename
+datai = pd.read_csv(fullpath)
+datai.head()
+
+#convertir en array
+colnames = datai.columns.values
+
+#Variables endegenas y exogenas
+predictors = colnames[:4]
+target = colnames[4]
+X = datai[predictors]
+Y = datai[target]
+
+from sklearn.ensemble import RandomForestClassifier
+forestc = RandomForestClassifier(n_jobs=2, oob_score=True, n_estimators=10)
+forestc.fit(X,Y)
+forestc.oob_decision_function_
+forestc.oob_score_
