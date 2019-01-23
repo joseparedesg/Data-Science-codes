@@ -1,0 +1,46 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jan  2 12:21:01 2019
+
+@author: Man
+"""
+
+import pandas as pd
+mainpath = r'C:\Users\Man\Documents\Machine Learning\Phyton Machine Learning\python-ml-course-master\datasets'
+filename = r'\boston\Boston.csv'
+fullpath = mainpath + filename
+datab = pd.read_csv(fullpath)
+datab.head()
+datab.shape
+
+#convertir en array
+colnames = datab.columns.values.tolist()
+
+#Variables endegenas y exogenas
+predictors = colnames[:13]
+target = colnames[13]
+X = datab[predictors]
+Y = datab[target]
+
+#importarlibrerias
+from sklearn.tree import DecisionTreeRegressor
+
+#configuramos arbol de regresion
+regtree = DecisionTreeRegressor(min_samples_split=30, min_samples_leaf=10, random_state=0)
+regtree.fit(X,Y)
+preds = regtree.predict(datab[predictors])
+datab["preds"]=preds
+datab[["preds","medv"]]
+
+#exportamos arbol a archivo dot (se puede ver en texto)
+from sklearn.tree import export_graphviz
+ with open(mainpath + "boston_rtree.dot", "w") as dotfile:
+    export_graphviz(regtree, out_file=dotfile, feature_names=predictors)
+    dotfile.close()
+
+#Podar arbol de decision
+
+from sklearn.model_selection import KFold
+import numpy as np
+from sklearn.model_selection import cross_val_score
+
